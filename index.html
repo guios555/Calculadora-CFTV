@@ -1,0 +1,172 @@
+<!Doctype HTML>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archival Retention Matrix | Calculadora CFTV</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app header">
+        
+        <header class="app-header">
+
+    <div class="header-top">
+
+        <div class="header-title">
+            <h1>🛡️ Dimensionamento Vital de Retenção</h1>
+            <p>Calculadora profissional para dimensionamento de HDs de DVR e NVR</p>
+        </div>
+
+        <div class="header-user">
+            <span>Desenvolvido por</span>
+            <strong>Guilherme Oliveira</strong>
+        </div>
+
+    </div>
+
+    <div class="header-status">
+
+        <span class="status online">
+            ● Sistema Online
+        </span>
+
+        <span>📷 CFTV</span>
+
+        <span>💾 Calculadora de Armazenamento</span>
+
+    </div>
+
+</header>
+    </header>
+    <main class="container">
+        <!-- Seção do Formulário / Adição de Câmeras -->
+        <section class="panel-section">
+        <h2>Configuração de Grupos de Câmeras</h2>
+        <form id="camera-form" class="camera-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="group-name">Nome do Grupo</label>
+                        <input type="text" id="group-name" placeholder="Ex: Câmeras Perímetro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="camera-count">Qtd. Câmeras</label>
+                        <input type="number" id="camera-count" min="1" value="4" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resolution">Resolução</label>
+                        <select id="resolution">
+                            <option value="720p">720p (HD)</option>
+                            <option value="1080p" selected>1080p (Full HD)</option>
+                            <option value="4MP">4MP (2K)</option>
+                            <option value="4K">4K (8MP)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="codec">Codec de Vídeo</label>
+                        <select id="codec">
+                            <option value="H.264">H.264</option>
+                            <option value="H.265" selected>H.265</option>
+                            <option value="H.265+">H.265+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fps">Taxa de Quadros (FPS)</label>
+                        <select id="fps">
+                            <option value="15" selected>15 FPS</option>
+                            <option value="30">30 FPS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motion-percent">% Gravação Por Movimento</label>
+                        <input type="number" id="motion-percent" min="10" max="100" value="100" placeholder="100 = Contínuo">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">+ Adicionar Perfil de Câmeras</button>
+            </form>
+
+            <!-- Tabela Dinâmica de Perfis Cadastrados -->
+            <div class="table-wrapper">
+                <table id="camera-table">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Qtd</th>
+                            <th>Resolução</th>
+                            <th>Codec</th>
+                            <th>FPS</th>
+                            <th>Bitrate Est. (Kbps)</th>
+                            <th>Consumo/Dia (GB)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="camera-list">
+                        <!-- Inserido dinamicamente via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Seção de Parâmetros Globais e Resultados -->
+        <section class="panel-section result-section">
+            <h2>Dimensionamento & Diagnóstico de Retenção</h2>
+
+            <div class="retention-controls">
+                <div class="form-group">
+                    <label for="retention-days">Dias de Retenção Desejados</label>
+                    <input type="number" id="retention-days" min="1" value="30">
+                </div>
+
+                <div class="form-group">
+                    <label for="hd-capacity">Capacidade Comercial do HD</label>
+                    <select id="hd-capacity">
+                        <option value="4">4 TB</option>
+                        <option value="8" selected>8 TB</option>
+                        <option value="10">10 TB</option>
+                        <option value="12">12 TB</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cards de Resultados -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="card-title">Volume Total Requerido</span>
+                    <span class="card-value" id="total-storage">0 TB</span>
+                </div>
+
+                <div class="metric-card">
+                    <span class="card-title">Throughput de Banda</span>
+                    <span class="card-value" id="total-bitrate">0 Mbps</span>
+                </div>
+
+                <div class="metric-card">
+                    <span class="card-title">Qtd. HDs Necessários</span>
+                    <span class="card-value" id="total-hds">0 HD(s)</span>
+                </div>
+
+                <div class="metric-card highlight">
+                    <span class="card-title">Mínimo de Baias no DVR/NVR</span>
+                    <span class="card-value" id="total-bays">1 Baia</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Archival Retention Matrix &copy; 2026 — Desenvolvido por Guilherme Oliveira</p>
+    </footer>
+
+    <script src="js/calculator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
