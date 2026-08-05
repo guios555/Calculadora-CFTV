@@ -47,10 +47,6 @@ cameraForm.addEventListener('submit', (event) => {
     cameraGroups.push(newGroup);
     cameraForm.reset();
     
-    // Restaurar valores padrão nos campos numéricos
-    document.getElementById('camera-count').value = 4;
-    document.getElementById('motion-percent').value = 100;
-
     renderUI();
 });
 
@@ -97,8 +93,11 @@ function renderUI() {
  * Recalcula e exibe as métricas totais na tela
  */
 function updateMetrics() {
-    const days = parseInt(retentionDaysInput.value) || 1;
-    const hdCap = parseInt(hdCapacitySelect.value) || 4;
+    const days = parseInt(retentionDaysInput.value);
+    const hdCap = parseInt(hdCapacitySelect.value);
+    if (isNaN(days) || isNaN(hdCap)) {
+        return;
+    }
 
     // Soma do consumo diário de todos os grupos
     const totalDailyGB = cameraGroups.reduce((acc, group) => acc + group.dailyStorageGB, 0);
