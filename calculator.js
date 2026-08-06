@@ -21,17 +21,25 @@ const CODEC_EFFICIENCY = {
  * Calcula o bitrate estimado por câmera individual (em Kbps)
  */
 function calculateCameraBitrate(resolution, codec, fps) {
-    const baseBitrate = BASE_BITRATES[resolution] || 4096;
-    const codecFactor = CODEC_EFFICIENCY[codec] || 1.0;
-    const fpsFactor = fps / 30; // Proporcional a 30 FPS
-
-    return Math.round(baseBitrate * codecFactor * fpsFactor);
+    const baseBitrate = BASE_BITRATES[resolution] ?? 4096;
+    const codecFactor = CODEC_EFFICIENCY[codec] ?? 1;
+    // Evita erro caso FPS venha vazio
+    fps = Number(fps) || 30;
+    const fpsFactor = fps / 30;
+    return Math.round( baseBitrate * codecFactor * fpsFactor
+    );
 }
 
 /**
  * Calcula o consumo de dados em Gigabytes por dia para um grupo de câmeras
  */
 function calculateGroupDailyStorage(cameraCount, bitrateKbps, motionPercent) {
+    motionPercent = Number(motionPercent);
+    if(motionPercent < 0)
+        motionPercent = 0;
+
+    if(motionPercent > 100)
+        motionPercent = 100;
     const motionFactor = motionPercent / 100;
     // Fórmula: (Kbps * 3600 segundos * 24 horas) / (8 * 1024 * 1024) para converter Kbits em Gigabytes
     const dailyGBPerCamera = (bitrateKbps * 86400) / (8 * 1024 * 1024);
@@ -50,7 +58,8 @@ function calculateHDRequirements(totalStorageGB, hdCapacityTB) {
         return { totalTB: 0, hdsNeeded: 0, baysNeeded: 1 };
     }
 
-    const hdsNeeded = Math.ceil(totalStorageTB / hdCapacityTB);
+    const safetyStorage = totalStorageTB * 1.10;
+    const hdsNeeded = Math.ceil(safetyStorage / hdCapacityTB);
     const baysNeeded = hdsNeeded; // Cada HD exige 1 baia no equipamento
 
     return {

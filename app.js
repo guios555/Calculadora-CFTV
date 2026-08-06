@@ -21,16 +21,17 @@ const totalBaysEl = document.getElementById('total-bays');
 cameraForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const name = document.getElementById('group-name').value;
-    const count = parseInt(document.getElementById('camera-count').value);
+    const name = document.getElementById('group-name').value.trim();
+    const count = Number(document.getElementById('camera-count').value);
     const resolution = document.getElementById('resolution').value;
     const codec = document.getElementById('codec').value;
-    const fps = parseInt(document.getElementById('fps').value);
-    const motion = parseInt(document.getElementById('motion-percent').value);
+    const fps = Number(document.getElementById('fps').value);
+    const motion = Number(document.getElementById('motion-percent').value);
 
     // Cálculo técnico para o novo grupo
     const estimatedBitrate = calculateCameraBitrate(resolution, codec, fps);
     const dailyStorageGB = calculateGroupDailyStorage(count, estimatedBitrate, motion);
+    const totalGroupBitrate = estimatedBitrate * count;
 
     const newGroup = {
         id: Date.now(),
@@ -41,6 +42,7 @@ cameraForm.addEventListener('submit', (event) => {
         fps,
         motion,
         bitrate: estimatedBitrate,
+        totalBitrate: totalGroupBitrate,
         dailyStorageGB
     };
 
@@ -101,7 +103,7 @@ function updateMetrics() {
 
     // Soma do consumo diário de todos os grupos
     const totalDailyGB = cameraGroups.reduce((acc, group) => acc + group.dailyStorageGB, 0);
-    const totalBitrateKbps = cameraGroups.reduce((acc, group) => acc + (group.bitrate * group.count), 0);
+    const totalBitrateKbps = cameraGroups.reduce(( acc, group) => acc + group.totalBitrate, 0);
     
     const requiredTotalGB = totalDailyGB * days;
     const hdResults = calculateHDRequirements(requiredTotalGB, hdCap);
